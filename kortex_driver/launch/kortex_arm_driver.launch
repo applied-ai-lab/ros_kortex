@@ -18,6 +18,10 @@
     <arg name="robot_name" default="my_$(arg arm)"/>
     <arg name="prefix" default=""/>
 
+    <!-- Planning Groups  -->
+    <arg name="arm_planning_group" default="arm"/>
+    <arg name="gripper_planning_group" default="gripper"/>
+
     <!-- Kortex API options -->
     <arg name="ip_address" default="192.168.1.10"/>
     <arg name="username" default="admin"/>
@@ -32,7 +36,7 @@
     <arg name="default_goal_tolerance" default="0.005"/> <!--radians-->
 
     <!-- Start the kortex_driver node -->
-    <node name="$(arg robot_name)_driver" pkg="kortex_driver" type="kortex_arm_driver" output="screen"> <!--launch-prefix="gdb -ex run args"-->
+    <node name="$(arg robot_name)_driver" pkg="kortex_driver" type="kortex_arm_driver" output="screen">
         <param name="sim" value="$(arg sim)"/>
         <param name="ip_address" value="$(arg ip_address)"/>
         <param name="username" value="$(arg username)"/>
@@ -45,6 +49,8 @@
         <param name="default_goal_tolerance" value="$(arg default_goal_tolerance)"/>
         <param name="arm" value="$(arg arm)"/>
         <param name="gripper" value="$(arg gripper)"/>
+        <param name="arm_planning_group" value="$(arg arm_planning_group)"/>
+        <param name="gripper_planning_group" value="$(arg gripper_planning_group)"/>
         <param name="dof" value="$(arg dof)"/>
         <param name="use_hard_limits" value="$(arg use_hard_limits)"/>
         <param name="robot_name" value="$(arg robot_name)"/>

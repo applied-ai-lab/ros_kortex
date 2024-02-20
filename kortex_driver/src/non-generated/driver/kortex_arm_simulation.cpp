@@ -36,8 +36,6 @@
 
 namespace 
 {
-    static const std::string ARM_PLANNING_GROUP = "arm";
-    static const std::string GRIPPER_PLANNING_GROUP = "gripper";
     static constexpr unsigned int FIRST_CREATED_ACTION_ID = 10000;
     static const std::set<unsigned int> DEFAULT_ACTIONS_IDENTIFIERS{1,2,3};
     static constexpr double JOINT_TRAJECTORY_TIMESTEP_SECONDS = 0.01;
@@ -58,7 +56,7 @@ KortexArmSimulation::KortexArmSimulation(ros::NodeHandle& node_handle): m_node_h
 
     // Arm information
     urdf::Model model;
-    model.initParam("/" + m_robot_name + "/robot_description");
+    model.initParam("/robot_description");
     ros::param::get("~dof", m_degrees_of_freedom);
     ros::param::get("~arm", m_arm_name);
     ros::param::get("~joint_names", m_arm_joint_names);
@@ -71,7 +69,7 @@ KortexArmSimulation::KortexArmSimulation(ros::NodeHandle& node_handle): m_node_h
         auto joint = model.getJoint(m_arm_joint_names[i]);
         m_arm_joint_limits_min[i] = joint->limits->lower;
         m_arm_joint_limits_max[i] = joint->limits->upper;
-    }
+    } 
 
     // Cartesian Twist limits
     ros::param::get("~maximum_linear_velocity", m_max_cartesian_twist_linear);
@@ -107,12 +105,18 @@ KortexArmSimulation::KortexArmSimulation(ros::NodeHandle& node_handle): m_node_h
         ros::param::get("~gripper_joint_limits_min", m_gripper_joint_limits_min);
     }
 
+    // Planning groups
+    ros::param::get("~arm_planning_group", m_arm_planning_group);
+    ros::param::get("~gripper_planning_group", m_gripper_planning_group);   
+
     // Print out simulation configuration
     ROS_INFO("Simulating arm with following characteristics:");
     ROS_INFO("Arm type : %s", m_arm_name.c_str());
     ROS_INFO("Gripper type : %s", m_gripper_name.empty() ? "None" : m_gripper_name.c_str());
     ROS_INFO("Arm namespace : %s", m_robot_name.c_str());
     ROS_INFO("URDF prefix : %s", m_prefix.c_str());
+    ROS_INFO("Arm Planning group : %s", m_arm_planning_group.c_str());
+    ROS_INFO("Gripper Planning group : %s", m_gripper_planning_group.c_str());
 
     // Building the KDL chain from the robot description
     // The chain goes from 'base_link' to 'tool_frame'
@@ -140,10 +144,10 @@ KortexArmSimulation::KortexArmSimulation(ros::NodeHandle& node_handle): m_node_h
     }
 
     // Start MoveIt client
-    m_moveit_arm_interface.reset(new moveit::planning_interface::MoveGroupInterface(ARM_PLANNING_GROUP));
+    m_moveit_arm_interface.reset(new moveit::planning_interface::MoveGroupInterface(m_arm_planning_group));
     if (IsGripperPresent())
     {
-        m_moveit_gripper_interface.reset(new moveit::planning_interface::MoveGroupInterface(GRIPPER_PLANNING_GROUP));   
+        m_moveit_gripper_interface.reset(new moveit::planning_interface::MoveGroupInterface(m_gripper_planning_group));   
     }
 
     // Create default actions
