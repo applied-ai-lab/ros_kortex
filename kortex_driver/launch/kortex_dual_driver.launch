@@ -31,7 +31,7 @@
 
     <!-- Action server params -->
     <arg name="left_default_goal_time_tolerance" default="0.5"/> <!--seconds-->
-    <arg name="left_default_goal_tolerance" default="0.005"/> <!--radians-->
+    <arg name="left_default_goal_tolerance" default="0.0005"/> <!--radians-->
 
     <!-- RIGHT ARM -->
     <arg name="right_robot_name" default="my_right_arm"/>
@@ -45,7 +45,7 @@
     <arg name="right_gripper" default=""/>
 
     <!-- Kortex API options -->
-    <arg name="right_ip_address" default="192.168.1.10"/>
+    <arg name="right_ip_address" default="192.168.2.10"/>
     <arg name="right_username" default="admin"/>
     <arg name="right_password" default="admin"/>
     <arg name="right_cyclic_data_publish_rate" default="$(arg cyclic_data_publish_rate)"/> <!--Hz-->
@@ -55,7 +55,7 @@
 
     <!-- Action server params -->
     <arg name="right_default_goal_time_tolerance" default="0.5"/> <!--seconds-->
-    <arg name="right_default_goal_tolerance" default="0.005"/> <!--radians-->
+    <arg name="right_default_goal_tolerance" default="0.0005"/> <!--radians-->
 
     <!-- Load arms descriptions -->
    <param 
