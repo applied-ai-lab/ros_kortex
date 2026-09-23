@@ -652,10 +652,14 @@ void KortexArmDriver::publishRobotFeedback()
         kortex_driver::BaseCyclic_Feedback base_feedback;
         ToRosData(feedback_from_api, base_feedback);
 
-        joint_state.name.resize(base_feedback.actuators.size() + base_feedback.interconnect.oneof_tool_feedback.gripper_feedback[0].motor.size());
-        joint_state.position.resize(base_feedback.actuators.size() + base_feedback.interconnect.oneof_tool_feedback.gripper_feedback[0].motor.size());
-        joint_state.velocity.resize(base_feedback.actuators.size() + base_feedback.interconnect.oneof_tool_feedback.gripper_feedback[0].motor.size());
-        joint_state.effort.resize(base_feedback.actuators.size() + base_feedback.interconnect.oneof_tool_feedback.gripper_feedback[0].motor.size());
+        // The arm reports gripper motors whenever its saved end effector type has a gripper, even if
+        // ~gripper is "" (e.g. a Tesollo hand driven elsewhere), so only count them when we drive the gripper.
+        // Otherwise they would be published as nameless joints.
+        const int gripper_joint_count = isGripperPresent() ? base_feedback.interconnect.oneof_tool_feedback.gripper_feedback[0].motor.size() : 0;
+        joint_state.name.resize(base_feedback.actuators.size() + gripper_joint_count);
+        joint_state.position.resize(base_feedback.actuators.size() + gripper_joint_count);
+        joint_state.velocity.resize(base_feedback.actuators.size() + gripper_joint_count);
+        joint_state.effort.resize(base_feedback.actuators.size() + gripper_joint_count);
         joint_state.header.stamp = ros::Time::now();
 
         for (int i = 0; i < base_feedback.actuators.size(); i++)
