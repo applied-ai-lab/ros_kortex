@@ -232,6 +232,9 @@ void KortexArmDriver::parseRosArguments()
         ROS_ERROR("%s", error_string.c_str());
         throw new std::runtime_error(error_string);
     }
+    // Optional: set false when the tool is driven outside Kortex (e.g. a Tesollo hand),
+    // so the arm's saved end effector type is not required to match ~gripper.
+    ros::param::param<bool>("~verify_end_effector", m_verify_end_effector, true);
     std::string robot_name;
     if (!ros::param::get("~robot_name", robot_name))
     {
@@ -365,7 +368,12 @@ void KortexArmDriver::verifyProductConfiguration()
     }
 
     // Compare gripper type (EndEffectorType)
-    if (!isGripperPresent())
+    if (!m_verify_end_effector)
+    {
+        ROS_WARN("Skipping end effector check (verify_end_effector is false): arm reports %s, launch file specifies gripper '%s'",
+                 Kinova::Api::ProductConfiguration::EndEffectorType_Name(product_config.end_effector_type()).c_str(), m_gripper_name.c_str());
+    }
+    else if (!isGripperPresent())
     {
         if (product_config.end_effector_type() != Kinova::Api::ProductConfiguration::EndEffectorType::END_EFFECTOR_TYPE_NOT_INSTALLED)
         {
