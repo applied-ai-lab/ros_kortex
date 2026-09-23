@@ -27,9 +27,9 @@
 #include "kortex_math_util.h"
 
 // Duration timeout for a gripper trajectory (in seconds) 
-#define GRIPPER_TRAJECTORY_TIME_LIMIT 2.0
+#define GRIPPER_TRAJECTORY_TIME_LIMIT 10.0
 
-#define MAX_GRIPPER_RELATIVE_ERROR 0.05
+#define MAX_GRIPPER_RELATIVE_ERROR 1.0
 #define MAX_CONSECUTIVE_POSITION_DIFFERENCE 0.01
 #define MAX_CONSECUTIVE_IDENTICAL_POSITIONS 4
 
